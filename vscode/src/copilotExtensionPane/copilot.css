@@ -1,0 +1,59 @@
+body {
+  padding: 12px;
+}
+textarea {
+  height: 3em;
+  background: inherit;
+  width: 100%;
+  border: none;
+  outline: none;
+  overflow-y: scroll;
+  margin: 4px;
+  line-height: 1.33;
+  vertical-align: middle;
+  cursor: text;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+.requestBox {
+  padding: 16px;
+  margin-left: 32px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+}
+
+.requestBox p {
+  margin-bottom: 0px;
+}
+
+.responseBox {
+  margin-bottom: 16px;
+}
+
+.responseBox pre code {
+  background: inherit;
+  /* border: 0.5px solid gray; */
+  display: block;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+.inputDiv {
+  border: 1px solid #ccc;
+  border-radius: 0.375em;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 80vw;
+  max-width: 600px;
+}
+
+.inputDiv:has(textarea:focus) {
+  border: 2px solid #0078d4;
+}

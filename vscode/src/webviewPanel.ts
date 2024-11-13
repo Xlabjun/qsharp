@@ -24,17 +24,34 @@ import { showDocumentationCommand } from "./documentation";
 import { getActiveProgram } from "./programConfig";
 import { EventType, sendTelemetryEvent } from "./telemetry";
 import { getRandomGuid } from "./utils";
+import {
+  CopilotConversation,
+  CopilotWebviewViewProvider,
+  // makeChatRequest,
+} from "./copilot/copilot";
+// import { Copilot } from "./copilot2";
 import { getPauliNoiseModel } from "./config";
+import { CopilotStreamCallback } from "./copilot/copilotTools";
 
 const QSharpWebViewType = "qsharp-webview";
 const compilerRunTimeoutMs = 1000 * 60 * 5; // 5 minutes
 
 export function registerWebViewCommands(context: ExtensionContext) {
   QSharpWebViewPanel.extensionUri = context.extensionUri;
+  const copilotProvider = new CopilotWebviewViewProvider(context.extensionUri);
 
   window.registerWebviewPanelSerializer(
     QSharpWebViewType,
     new QSharpViewViewPanelSerializer(),
+  );
+
+  log.info("registering webview view provider");
+  window.registerWebviewViewProvider(
+    CopilotWebviewViewProvider.viewType,
+    copilotProvider,
+    {
+      webviewOptions: { retainContextWhenHidden: true },
+    },
   );
 
   const compilerWorkerScriptPath = Uri.joinPath(
@@ -384,6 +401,15 @@ export function registerWebViewCommands(context: ExtensionContext) {
       await showDocumentationCommand(context.extensionUri);
     }),
   );
+
+  context.subscriptions.push(
+    commands.registerCommand("qsharp-vscode.showQuantumCopilot", async () => {
+      const message = {
+        command: "copilot",
+      };
+      sendMessageToPanel("copilot", true, message);
+    }),
+  );
 }
 
 type PanelType =
@@ -391,7 +417,8 @@ type PanelType =
   | "estimates"
   | "help"
   | "circuit"
-  | "documentation";
+  | "documentation"
+  | "copilot";
 
 const panelTypeToPanel: Record<
   PanelType,
@@ -406,6 +433,7 @@ const panelTypeToPanel: Record<
     panel: undefined,
     state: {},
   },
+  copilot: { title: "Azure Quantum Copilot", panel: undefined, state: {} },
 };
 
 export function sendMessageToPanel(
@@ -450,6 +478,8 @@ export class QSharpWebViewPanel {
   public static extensionUri: Uri;
   private _ready = false;
   private _queuedMessages: any[] = [];
+  private _copilot: CopilotConversation;
+  private _streamCallback: CopilotStreamCallback;
 
   constructor(
     private type: PanelType,
@@ -458,6 +488,15 @@ export class QSharpWebViewPanel {
     log.info("Creating webview panel of type", type);
     this.panel.onDidDispose(() => this.dispose());
 
+    this._streamCallback = (payload, command) => {
+      // log.info("message posted with command: ", command);
+      this.panel.webview.postMessage({
+        command: command,
+        ...payload,
+      });
+    };
+
+    this._copilot = new CopilotConversation(this._streamCallback);
     this.panel.webview.html = this._getWebviewContent(this.panel.webview);
     this._setWebviewMessageListener(this.panel.webview);
   }
@@ -489,10 +528,13 @@ export class QSharpWebViewPanel {
       <link rel="stylesheet" href="${githubCss}" />
       <link rel="stylesheet" href="${katexCss}" />
       <link rel="stylesheet" href="${webviewCss}" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css"
+    />
       <script src="${webviewJs}"></script>
       <script>
         window.resourcesUri = "${resourcesUri.toString()}";
       </script>
+      <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     </head>
     <body>
     </body>
@@ -513,16 +555,19 @@ export class QSharpWebViewPanel {
   private _setWebviewMessageListener(webview: Webview) {
     console.log("Setting up webview message listener");
     webview.onDidReceiveMessage((message: any) => {
+      log.debug("Received message from webview", message);
       if (message.command === "ready") {
         this._ready = true;
         this._queuedMessages.forEach((message) =>
           this.panel.webview.postMessage(message),
         );
         this._queuedMessages = [];
+      } else if (message.command == "copilotRequest") {
+        // Send the message to the copilot
+        // TODO: Move this view specific logic out of here
+        this._copilot.makeChatRequest(message.request);
+        // makeChatRequest(message.request, this._streamCallback);
       }
-
-      // No messages are currently sent from the webview
-      console.log("Message for webview received", message);
     });
   }
 
@@ -545,7 +590,8 @@ export class QSharpViewViewPanelSerializer implements WebviewPanelSerializer {
       panelType !== "histogram" &&
       panelType !== "circuit" &&
       panelType !== "help" &&
-      panelType != "documentation"
+      panelType != "documentation" &&
+      panelType != "copilot"
     ) {
       // If it was loading when closed, that's fine
       if (panelType === "loading") {
