@@ -67,12 +67,6 @@ type CopilotState = {
   inProgress: boolean;
 };
 
-type CopilotState = {
-  viewType: "copilot";
-  qas: QA[];
-  inProgress: boolean;
-};
-
 type State =
   | { viewType: "loading" }
   | { viewType: "help" }

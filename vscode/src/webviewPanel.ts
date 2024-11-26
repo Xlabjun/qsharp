@@ -29,6 +29,7 @@ import {
   CopilotWebviewViewProvider,
 } from "./copilot/copilot";
 import { CopilotStreamCallback } from "./copilot/copilotTools";
+import { getPauliNoiseModel } from "./config";
 
 const QSharpWebViewType = "qsharp-webview";
 const compilerRunTimeoutMs = 1000 * 60 * 5; // 5 minutes
