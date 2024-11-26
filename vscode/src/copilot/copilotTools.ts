@@ -17,7 +17,6 @@ import {
 import { supportsAdaptive } from "../azure/providerProperties.js";
 import { getQirForVisibleQs } from "../qirGeneration.js";
 import { CopilotConversation } from "./copilot.js";
-import { get } from "http";
 
 export type CopilotStreamCallback = (
   msgPayload: object,
