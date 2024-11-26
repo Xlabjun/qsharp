@@ -3,9 +3,8 @@
 
 import Std.Arrays.Tail, Std.Arrays.Most, Std.Arrays.Enumerated;
 import Utils.AndLadder;
-import Unstable.Arithmetic.RippleCarryTTKIncByLE;
+import Std.Arithmetic.RippleCarryTTKIncByLE, Std.Arithmetic.ApplyIfGreaterLE;
 import Std.Diagnostics.Fact;
-import Unstable.Arithmetic.ApplyIfGreaterLE;
 
 /// # Summary
 /// Square signed integer `xs` and store
@@ -285,7 +284,7 @@ operation DivideI(xs : Qubit[], ys : Qubit[], result : Qubit[]) : Unit is Adj + 
             (Controlled Adjoint RippleCarryTTKIncByLE)([result[i]], (ys, xtrunc));
         }
     }
-}   
+}
 
 /// # Summary
 /// Computes the reciprocal 1/x for an unsigned integer x

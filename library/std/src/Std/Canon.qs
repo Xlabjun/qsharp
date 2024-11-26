@@ -54,7 +54,7 @@ operation ApplyToEach<'T>(singleElementOperation : ('T => Unit), register : 'T[]
 /// ```
 ///
 /// # See Also
-/// - Microsoft.Quantum.Canon.ApplyToEach
+/// - [Std.Canon.ApplyToEach](xref:Qdk.Std.Canon.ApplyToEach)
 operation ApplyToEachA<'T>(singleElementOperation : ('T => Unit is Adj), register : 'T[]) : Unit is Adj {
     for item in register {
         singleElementOperation(item);
@@ -83,7 +83,7 @@ operation ApplyToEachA<'T>(singleElementOperation : ('T => Unit is Adj), registe
 /// ```
 ///
 /// # See Also
-/// - Microsoft.Quantum.Canon.ApplyToEach
+/// - [Std.Canon.ApplyToEach](xref:Qdk.Std.Canon.ApplyToEach)
 operation ApplyToEachC<'T>(singleElementOperation : ('T => Unit is Ctl), register : 'T[]) : Unit is Ctl {
     for item in register {
         singleElementOperation(item);
@@ -112,7 +112,7 @@ operation ApplyToEachC<'T>(singleElementOperation : ('T => Unit is Ctl), registe
 /// ```
 ///
 /// # See Also
-/// - Microsoft.Quantum.Canon.ApplyToEach
+/// - [Std.Canon.ApplyToEach](xref:Qdk.Std.Canon.ApplyToEach)
 operation ApplyToEachCA<'T>(singleElementOperation : ('T => Unit is Adj + Ctl), register : 'T[]) : Unit is Adj + Ctl {
     for item in register {
         singleElementOperation(item);
@@ -234,13 +234,13 @@ operation CZ(control : Qubit, target : Qubit) : Unit is Adj + Ctl {
     adjoint self;
 }
 
-    /// Given a pair, returns its first element.
+/// Given a pair, returns its first element.
 function Fst<'T, 'U>(pair : ('T, 'U)) : 'T {
     let (fst, _) = pair;
     return fst;
 }
 
-    /// Given a pair, returns its second element.
+/// Given a pair, returns its second element.
 function Snd<'T, 'U>(pair : ('T, 'U)) : 'U {
     let (_, snd) = pair;
     return snd;

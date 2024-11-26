@@ -353,6 +353,39 @@ pub const CUSTOM_MEASUREMENT_WITH_SIMULATABLE_INTRINSIC_ATTR: &str = r#"
         }
     }"#;
 
+pub const CUSTOM_RESET: &str = r#"
+    namespace Test {
+        operation Main() : Result {
+            use q = Qubit();
+            H(q);
+            let res = M(q);
+            Foo(q);
+            res
+        }
+
+        @Reset()
+        operation Foo(q: Qubit) : Unit {
+            body intrinsic;
+        }
+    }"#;
+
+pub const CUSTOM_RESET_WITH_SIMULATABLE_INTRINSIC_ATTR: &str = r#"
+    namespace Test {
+        operation Main() : Result {
+            use q = Qubit();
+            H(q);
+            let res = M(q);
+            Foo(q);
+            res
+        }
+
+        @Reset()
+        @SimulatableIntrinsic()
+        operation Foo(q: Qubit) : Unit {
+            Reset(q);
+        }
+    }"#;
+
 pub const USE_DYNAMIC_INDEX: &str = r#"
     namespace Test {
         import Std.Convert.*;
@@ -486,3 +519,10 @@ pub const USE_ENTRY_POINT_INT_ARRAY_IN_TUPLE: &str = r#"
             (M(q), [1, 2, 3])
         }
     }"#;
+
+pub const DYNAMIC_ARRAY_BINARY_OP: &str = r#"
+    operation Main() : Unit {
+        use qs = Qubit[2];
+        MResetEachZ(qs) == [Zero, Zero];
+    }
+"#;

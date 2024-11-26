@@ -15,7 +15,9 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, Diagnostic, Error)]
 pub enum Error {
-    #[error("a callable with the measurement attribute should take at least one argument of type")]
+    #[error(
+        "a callable with the measurement attribute should take at least one argument of type Qubit"
+    )]
     #[diagnostic(code("Qsc.Measurement.NoArguments"))]
     NoArguments(#[label] Span),
 

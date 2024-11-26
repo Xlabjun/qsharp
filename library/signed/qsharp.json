@@ -2,12 +2,12 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "Unstable": {
+    "Qtest": {
       "github": {
         "owner": "Microsoft",
         "repo": "qsharp",
-        "ref": "3195043",
-        "path": "library/unstable"
+        "ref": "486616a4",
+        "path": "library/qtest"
       }
     }
   },

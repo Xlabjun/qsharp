@@ -8,7 +8,7 @@
 
 #![warn(missing_docs)]
 
-use crate::ty::{Arrow, FunctorSet, FunctorSetValue, GenericArg, GenericParam, Scheme, Ty, Udt};
+use crate::ty::{Arrow, FunctorSet, FunctorSetValue, GenericArg, Scheme, Ty, TypeParameter, Udt};
 use indenter::{indented, Indented};
 use num_bigint::BigInt;
 use qsc_data_structures::{
@@ -295,7 +295,7 @@ impl Display for ItemId {
 
 /// A resolution. This connects a usage of a name with the declaration of that name by uniquely
 /// identifying the node that declared it.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub enum Res {
     /// An invalid resolution.
     Err,
@@ -747,7 +747,7 @@ pub struct CallableDecl {
     /// The name of the callable.
     pub name: Ident,
     /// The generic parameters to the callable.
-    pub generics: Vec<GenericParam>,
+    pub generics: Vec<TypeParameter>,
     /// The input to the callable.
     pub input: PatId,
     /// The return type of the callable.
@@ -756,6 +756,8 @@ pub struct CallableDecl {
     pub functors: FunctorSetValue,
     /// The callable implementation.
     pub implementation: CallableImpl,
+    /// The attributes of the callable, (e.g.: Measurement or Reset).
+    pub attrs: Vec<Attr>,
 }
 
 impl CallableDecl {
@@ -1521,6 +1523,8 @@ pub enum Attr {
     EntryPoint,
     /// Indicates that a callable is a measurement.
     Measurement,
+    /// Indicates that a callable is a reset.
+    Reset,
 }
 
 /// A field.
@@ -1585,21 +1589,19 @@ pub enum Visibility {
 }
 
 /// A callable kind.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub enum CallableKind {
     /// A function.
     Function,
     /// An operation.
     Operation,
-    /// A measurement.
-    Measurement,
 }
 
 impl Display for CallableKind {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             CallableKind::Function => f.write_str("function"),
-            CallableKind::Operation | CallableKind::Measurement => f.write_str("operation"),
+            CallableKind::Operation => f.write_str("operation"),
         }
     }
 }
