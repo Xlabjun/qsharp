@@ -16,9 +16,10 @@ import {
   type ReData,
 } from "qsharp-lang/ux";
 import { HelpPage } from "./help";
-import hljsQsharp from "./qsharp-hljs";
-import "./webview.css";
 import { DocumentationView, IDocFile } from "./docview";
+import hljsQsharp from "./qsharp-hljs";
+
+import "./webview.css";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - there are no types for this
@@ -58,6 +59,12 @@ type DocumentationState = {
   viewType: "documentation";
   fragmentsToRender: IDocFile[];
   projectName: string;
+};
+
+type CopilotState = {
+  viewType: "copilot";
+  qas: QA[];
+  inProgress: boolean;
 };
 
 type CopilotState = {

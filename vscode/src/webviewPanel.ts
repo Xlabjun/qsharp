@@ -27,10 +27,7 @@ import { getRandomGuid } from "./utils";
 import {
   CopilotConversation,
   CopilotWebviewViewProvider,
-  // makeChatRequest,
 } from "./copilot/copilot";
-// import { Copilot } from "./copilot2";
-import { getPauliNoiseModel } from "./config";
 import { CopilotStreamCallback } from "./copilot/copilotTools";
 
 const QSharpWebViewType = "qsharp-webview";
